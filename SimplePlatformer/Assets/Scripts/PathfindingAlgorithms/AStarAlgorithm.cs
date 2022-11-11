@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Additional;
 using Mazes;
+using MinimaxAlgorithms;
+using Unity.VisualScripting;
 
 namespace PathfindingAlgorithms
 {

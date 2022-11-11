@@ -3,7 +3,6 @@ using System.Linq;
 using Additional;
 using Mazes;
 using PathfindingAlgorithms;
-using Vakor.MiniMaxAlgorithm.PathfindingAlgorithms;
 
 namespace MinimaxAlgorithms
 {
