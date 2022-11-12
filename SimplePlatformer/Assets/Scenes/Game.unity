@@ -246,9 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef29c580eef249c438d624fcf162c9ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tile:
-    tileSquare: {fileID: 9141098114939345851, guid: e9dc98a14486fc9448be0a6cde563fd2, type: 3}
-    tileText: {fileID: 5503227456150179347, guid: c44b39ad412dfc6409b019ac3bf8109d, type: 3}
+  tile: {fileID: 9141098114939345851, guid: e9dc98a14486fc9448be0a6cde563fd2, type: 3}
   distanceBtwTiles: 10
 --- !u!4 &219520634
 Transform:
