@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Additional;
 using Games;
 using Mazes;
@@ -10,8 +11,8 @@ using Random = UnityEngine.Random;
 
 public class Tile
 {
-    public GameObject tileSquare;
-    public TMP_Text tileText;
+    public GameObject TileSquare;
+    public TMP_Text TileText;
 }
 
 public class GameController : MonoBehaviour
@@ -20,17 +21,26 @@ public class GameController : MonoBehaviour
 
     public GameObject tile;
     public float distanceBtwTiles;
+    public double delay;
     private Maze _maze;
     private Tile[,] _tiles;
     private IPathFindingAlgorithm _pathFindingAlgorithm;
+    private GameObject _tilesWrapper;
 
     void Start()
     {
         _maze = Maze.GenerateDefaultMaze();
         _tiles = new Tile[_maze.Height, _maze.Width];
         _pathFindingAlgorithm = new LeeAlgorithm();
+        _tilesWrapper = new GameObject("TilesWrapper");
+        _pathFindingAlgorithm.TileChecked += (a, b) =>
+        {
+            Thread.Sleep(TimeSpan.FromSeconds(delay));
+            _tiles[b.Coordinate.X, b.Coordinate.Y].TileText.text += b.Number.ToString();
+        };
         InstantiateField();
         SpawnEnemy();
+        //TODO: Try use events in pathfinding algorithms
     }
 
     private void InstantiateField()
@@ -43,13 +53,13 @@ public class GameController : MonoBehaviour
                 {
                     GameObject tileSquare = Instantiate(tile,
                         new Vector3(distanceBtwTiles * i, 0, distanceBtwTiles * j),
-                        Quaternion.identity);
+                        Quaternion.identity, _tilesWrapper.transform);
                     _tiles[i, j] = new Tile
                     {
-                        tileSquare = tileSquare,
-                        tileText = tileSquare.GetComponentInChildren<TMP_Text>()
+                        TileSquare = tileSquare,
+                        TileText = tileSquare.GetComponentInChildren<TMP_Text>()
                     };
-                    _tiles[i, j].tileText.text = "";
+                    _tiles[i, j].TileText.text = "";
                 }
             }
         }
@@ -63,7 +73,7 @@ public class GameController : MonoBehaviour
             enemyCoordinates = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
         }
 
-        _tiles[enemyCoordinates.X, enemyCoordinates.Y].tileText.text = "S";
+        _tiles[enemyCoordinates.X, enemyCoordinates.Y].TileText.text = "S";
 
         Coordinates enemyCoordinates1 = new Coordinates(-1, -1);
         while (!_maze.CheckCoordinatesForValid(enemyCoordinates1))
@@ -71,12 +81,12 @@ public class GameController : MonoBehaviour
             enemyCoordinates1 = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
         }
 
-        _tiles[enemyCoordinates1.X, enemyCoordinates1.Y].tileText.text = "F";
+        _tiles[enemyCoordinates1.X, enemyCoordinates1.Y].TileText.text = "F";
 
         _pathFindingAlgorithm.FindPath(_maze, enemyCoordinates, enemyCoordinates1, out List<Coordinates> path);
         foreach (var coordinate in path)
         {
-            _tiles[coordinate.X, coordinate.Y].tileText.text += "X";
+            _tiles[coordinate.X, coordinate.Y].TileText.text += "X";
         }
     }
 

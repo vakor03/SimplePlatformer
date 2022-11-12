@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Additional;
 using Mazes;
 
@@ -11,6 +12,14 @@ namespace PathfindingAlgorithms
         static readonly int[] RowNum = { -1, 0, 0, 1 };
         static readonly int[] ColNum = { 0, -1, 1, 0 };
 
+        public event EventHandler<TileCheckedEventArgs> TileChecked;
+
+        protected virtual void OnTileChecked(TileCheckedEventArgs e)
+        {
+            TileChecked?.Invoke(this,e);
+        }
+
+        private int _iterationCount;
         public int FindPath(Maze maze, Coordinates startPoint, Coordinates destPoint, out List<Coordinates> path)
         {
             path = null!;
@@ -36,6 +45,7 @@ namespace PathfindingAlgorithms
                     return current.Distance;
                 }
 
+                _iterationCount++;
                 AddAdjNodesToQueue(nodeQueue,current,maze);
             }
 
@@ -52,8 +62,9 @@ namespace PathfindingAlgorithms
                     !_visitedNodes[adjCoordinates.X, adjCoordinates.Y])
                 {
                     _visitedNodes[adjCoordinates.X, adjCoordinates.Y] = true;
-
-                    nodeQueue.Enqueue(new QueueNode(adjCoordinates, current.Distance + 1, current));
+                    QueueNode node = new QueueNode(adjCoordinates, current.Distance + 1, current);
+                    nodeQueue.Enqueue(node);
+                    OnTileChecked(new TileCheckedEventArgs(node.Coordinates,node.Distance));
                 }
             }
         }
