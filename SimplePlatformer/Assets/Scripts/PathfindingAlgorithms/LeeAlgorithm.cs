@@ -64,7 +64,7 @@ namespace PathfindingAlgorithms
                     _visitedNodes[adjCoordinates.X, adjCoordinates.Y] = true;
                     QueueNode node = new QueueNode(adjCoordinates, current.Distance + 1, current);
                     nodeQueue.Enqueue(node);
-                    OnTileChecked(new TileCheckedEventArgs(node.Coordinates,node.Distance));
+                    OnTileChecked(new TileCheckedEventArgs(node.Coordinates,node.Distance.ToString()));
                 }
             }
         }

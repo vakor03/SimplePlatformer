@@ -5,13 +5,13 @@ namespace PathfindingAlgorithms
 {
     public class TileCheckedEventArgs : EventArgs
     {
-        public TileCheckedEventArgs(Coordinates coordinate, double number)
+        public TileCheckedEventArgs(Coordinates coordinate, string text)
         {
             Coordinate = coordinate;
-            Number = number;
+            Text = text;
         }
 
         public Coordinates Coordinate { get; }
-        public double Number { get; }
+        public string Text { get; }
     }
 }

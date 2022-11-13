@@ -248,6 +248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tile: {fileID: 9141098114939345851, guid: e9dc98a14486fc9448be0a6cde563fd2, type: 3}
   distanceBtwTiles: 10
+  delay: 0.1
 --- !u!4 &219520634
 Transform:
   m_ObjectHideFlags: 0

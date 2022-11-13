@@ -31,12 +31,11 @@ public class GameController : MonoBehaviour
     {
         _maze = Maze.GenerateDefaultMaze();
         _tiles = new Tile[_maze.Height, _maze.Width];
-        _pathFindingAlgorithm = new LeeAlgorithm();
+        _pathFindingAlgorithm = new AStarAlgorithm();
         _tilesWrapper = new GameObject("TilesWrapper");
         _pathFindingAlgorithm.TileChecked += (a, b) =>
         {
-            Thread.Sleep(TimeSpan.FromSeconds(delay));
-            _tiles[b.Coordinate.X, b.Coordinate.Y].TileText.text += b.Number.ToString();
+            _tiles[b.Coordinate.X, b.Coordinate.Y].TileText.text += b.Text;
         };
         InstantiateField();
         SpawnEnemy();
