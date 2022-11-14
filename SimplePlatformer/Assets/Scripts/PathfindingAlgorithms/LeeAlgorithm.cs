@@ -18,8 +18,7 @@ namespace PathfindingAlgorithms
         {
             TileChecked?.Invoke(this,e);
         }
-
-        private int _iterationCount;
+        
         public int FindPath(Maze maze, Coordinates startPoint, Coordinates destPoint, out List<Coordinates> path)
         {
             path = null!;
@@ -45,7 +44,6 @@ namespace PathfindingAlgorithms
                     return current.Distance;
                 }
 
-                _iterationCount++;
                 AddAdjNodesToQueue(nodeQueue,current,maze);
             }
 

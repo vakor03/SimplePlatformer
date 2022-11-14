@@ -10,14 +10,21 @@ namespace PathfindingAlgorithms
     public class AStarAlgorithm : IPathFindingAlgorithm
     {
         private bool[,] _visitedNodes;
+        private readonly PriorityQueue<QueueNode, int> _priorityQueue = new();
         static readonly int[] RowNum = { -1, 0, 0, 1 };
         static readonly int[] ColNum = { 0, -1, 1, 0 };
 
         public event EventHandler<TileCheckedEventArgs> TileChecked;
 
+        protected virtual void OnTileChecked(TileCheckedEventArgs e)
+        {
+            TileChecked?.Invoke(this,e);
+        }
+
         public int FindPath(Maze maze, Coordinates startPoint, Coordinates destPoint, out List<Coordinates> path)
         {
             path = null!;
+            _priorityQueue.Clear();
             if (maze[startPoint] != 1 || maze[destPoint] != 1)
             {
                 return -1;
@@ -25,14 +32,13 @@ namespace PathfindingAlgorithms
 
             _visitedNodes = new bool[maze.Height, maze.Width];
             _visitedNodes[startPoint.X, startPoint.Y] = true;
-
-            PriorityQueue<QueueNode, int> nodeQueue = new();
+            
             QueueNode startNode = new QueueNode(startPoint, 0, null!);
-            nodeQueue.Enqueue(startNode, FindHeuristic(startNode, destPoint));
+            _priorityQueue.Enqueue(startNode, FindHeuristic(startNode, destPoint));
 
-            while (nodeQueue.Count != 0)
+            while (_priorityQueue.Count != 0)
             {
-                QueueNode current = nodeQueue.Dequeue();
+                QueueNode current = _priorityQueue.Dequeue();
                 Coordinates coordinates = current.Coordinates;
 
                 if (coordinates.X == destPoint.X && coordinates.Y == destPoint.Y)
@@ -41,14 +47,14 @@ namespace PathfindingAlgorithms
                     return current.Distance;
                 }
 
-                AddAdjNodesToQueue(nodeQueue, current, maze, destPoint);
+                AddAdjNodesToQueue(current, maze, destPoint);
             }
 
             return -1;
         }
 
         
-        private void AddAdjNodesToQueue(PriorityQueue<QueueNode, int> nodeQueue, QueueNode current, Maze maze,
+        private void AddAdjNodesToQueue(QueueNode current, Maze maze,
             Coordinates destPoint)
         {
             for (int i = 0; i < 4; i++)
@@ -61,7 +67,10 @@ namespace PathfindingAlgorithms
                     _visitedNodes[adjCoordinates.X, adjCoordinates.Y] = true;
 
                     QueueNode adjNode = new QueueNode(adjCoordinates, current.Distance + 1, current);
-                    nodeQueue.Enqueue(adjNode, FindHeuristic(adjNode, destPoint));
+                    int priority = FindHeuristic(adjNode, destPoint);
+                    _priorityQueue.Enqueue(adjNode, priority);
+                    OnTileChecked(new TileCheckedEventArgs(adjNode.Coordinates,priority.ToString()));
+
                 }
             }
         }

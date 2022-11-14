@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Threading;
 using Additional;
-using Games;
 using Mazes;
 using PathfindingAlgorithms;
 using TMPro;
