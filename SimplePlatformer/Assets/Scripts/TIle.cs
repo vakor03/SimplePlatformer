@@ -14,7 +14,7 @@ public class TIle : MonoBehaviour
     void Awake()
     {
         _renderer = GetComponent<Renderer>();
-        GetComponent<GameObject>();
+       
         TileText = GetComponentInChildren<TMP_Text>();
         TileText.color = Color.grey;
     }
