@@ -24,20 +24,32 @@ public class GameController : MonoBehaviour
     private Coordinates _finishCoordinates;
 
 
+    private void Awake()
+    {
+        
+    }
+
     void Start()
     {
         dropdownHandler.InitDropdown(new List<string> { AStarAlgorithm.Name, LeeAlgorithm.Name }, OnDropdownSelected);
         _maze = Maze.GenerateDefaultMaze();
         _tiles = new Tile[_maze.Height, _maze.Width];
         _tilesWrapper = new GameObject("TilesWrapper");
-        _pathFindingAlgorithm.TileChecked += (a, b) =>
-        {
-            _tiles[b.Coordinate.X, b.Coordinate.Y].TileText.text += b.Text;
-        };
+
+        InitAlgorithm(AStarAlgorithm.GetInstance);
+        InitAlgorithm(LeeAlgorithm.GetInstance);
         InstantiateField();
 
 
         SpawnEnemy();
+    }
+
+    private void InitAlgorithm(IPathFindingAlgorithm pathFindingAlgorithm)
+    {
+        pathFindingAlgorithm.TileChecked += (a, b) =>
+        {
+            _tiles[b.Coordinate.X, b.Coordinate.Y].TileText.text += b.Text;
+        };
     }
 
     private void OnDropdownSelected(Dropdown dropdown)
@@ -46,10 +58,10 @@ public class GameController : MonoBehaviour
         switch (dropdown.options[dropdown.value].text)
         {
             case AStarAlgorithm.Name:
-                SetPathfindingAlgorithm(new AStarAlgorithm());
+                SetPathfindingAlgorithm(AStarAlgorithm.GetInstance);
                 break;
             case LeeAlgorithm.Name:
-                SetPathfindingAlgorithm(new LeeAlgorithm());
+                SetPathfindingAlgorithm(LeeAlgorithm.GetInstance);
                 break;
             default:
                 throw new ArgumentException();

@@ -7,8 +7,13 @@ namespace PathfindingAlgorithms
 {
     public class LeeAlgorithm : IPathFindingAlgorithm
     {
+        public static LeeAlgorithm GetInstance { get; } = new();
         public const string Name = "Lee algorithm";
         private bool[,] _visitedNodes;
+
+        private LeeAlgorithm()
+        {
+        }
 
         static readonly int[] RowNum = { -1, 0, 0, 1 };
         static readonly int[] ColNum = { 0, -1, 1, 0 };

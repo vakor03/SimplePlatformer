@@ -9,10 +9,16 @@ namespace PathfindingAlgorithms
 {
     public class AStarAlgorithm : IPathFindingAlgorithm
     {
+        public static AStarAlgorithm GetInstance { get; } = new();
+
         private bool[,] _visitedNodes;
         private readonly PriorityQueue<QueueNode, int> _priorityQueue = new();
         static readonly int[] RowNum = { -1, 0, 0, 1 };
         static readonly int[] ColNum = { 0, -1, 1, 0 };
+
+        private AStarAlgorithm()
+        {
+        }
 
         public event EventHandler<TileCheckedEventArgs> TileChecked;
 
