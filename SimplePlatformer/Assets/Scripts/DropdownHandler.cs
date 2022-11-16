@@ -1,38 +1,30 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DropdownHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private Action<Dropdown> _dropdownItemSelected;
+    private List<string> _items;
+    
     void Start()
     {
         var dropdown = transform.GetComponent<Dropdown>();
 
-        List<string> items = new List<string>
+        _dropdownItemSelected(dropdown);
+
+        foreach (var item in _items)
         {
-            "A* algorithm",
-            "Lee algorithm"
-        };
-        DropdownItemSelected(dropdown);
-        
-        foreach (var item in items)
-        {
-            dropdown.options.Add(new Dropdown.OptionData(){text = item});
+            dropdown.options.Add(new Dropdown.OptionData() { text = item });
         }
 
-        dropdown.onValueChanged.AddListener(delegate { DropdownItemSelected(dropdown);});
+        dropdown.onValueChanged.AddListener(delegate { _dropdownItemSelected(dropdown); });
     }
 
-    private void DropdownItemSelected(Dropdown dropdown)
+    public void InitDropdown(List<string> items, Action<Dropdown> dropdownItemSelected)
     {
-        throw new System.NotImplementedException();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        _dropdownItemSelected = dropdownItemSelected;
+        _items = items;
     }
 }

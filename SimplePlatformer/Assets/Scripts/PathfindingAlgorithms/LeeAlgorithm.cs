@@ -7,6 +7,7 @@ namespace PathfindingAlgorithms
 {
     public class LeeAlgorithm : IPathFindingAlgorithm
     {
+        public const string Name = "Lee algorithm";
         private bool[,] _visitedNodes;
 
         static readonly int[] RowNum = { -1, 0, 0, 1 };
@@ -18,8 +19,6 @@ namespace PathfindingAlgorithms
         {
             TileChecked?.Invoke(this,e);
         }
-
-        public string Name => "Lee algorithm";
 
         public int FindPath(Maze maze, Coordinates startPoint, Coordinates destPoint, out List<Coordinates> path)
         {

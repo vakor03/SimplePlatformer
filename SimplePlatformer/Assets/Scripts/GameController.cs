@@ -3,37 +3,64 @@ using System.Collections.Generic;
 using Additional;
 using Mazes;
 using PathfindingAlgorithms;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 
 public class GameController : MonoBehaviour
 {
-    // Start is called before the first frame update
-
     public GameObject tilePrefab;
     public float distanceBtwTiles;
+    public DropdownHandler dropdownHandler;
     public double delay;
     private Maze _maze;
     private Tile[,] _tiles;
     private IPathFindingAlgorithm _pathFindingAlgorithm;
     private GameObject _tilesWrapper;
 
+    private Coordinates _startCoordinates;
+    private Coordinates _finishCoordinates;
+
+
     void Start()
     {
+        dropdownHandler.InitDropdown(new List<string> { AStarAlgorithm.Name, LeeAlgorithm.Name }, OnDropdownSelected);
         _maze = Maze.GenerateDefaultMaze();
         _tiles = new Tile[_maze.Height, _maze.Width];
-        _pathFindingAlgorithm = new LeeAlgorithm();
         _tilesWrapper = new GameObject("TilesWrapper");
         _pathFindingAlgorithm.TileChecked += (a, b) =>
         {
             _tiles[b.Coordinate.X, b.Coordinate.Y].TileText.text += b.Text;
         };
         InstantiateField();
+
+
         SpawnEnemy();
-        //TODO: Try use events in pathfinding algorithms
+    }
+
+    private void OnDropdownSelected(Dropdown dropdown)
+    {
+        //TODO: create Singleton for algorithms
+        switch (dropdown.options[dropdown.value].text)
+        {
+            case AStarAlgorithm.Name:
+                SetPathfindingAlgorithm(new AStarAlgorithm());
+                break;
+            case LeeAlgorithm.Name:
+                SetPathfindingAlgorithm(new LeeAlgorithm());
+                break;
+            default:
+                throw new ArgumentException();
+        }
+    }
+
+    private void SetPathfindingAlgorithm(IPathFindingAlgorithm pathFindingAlgorithm)
+    {
+        _pathFindingAlgorithm = pathFindingAlgorithm;
+        _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
+        DrawPath(path);
     }
 
     private void InstantiateField()
@@ -56,27 +83,28 @@ public class GameController : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        Coordinates enemyCoordinates = new Coordinates(-1, -1);
-        while (!_maze.CheckCoordinatesForValid(enemyCoordinates))
+        while (!_maze.CheckCoordinatesForValid(_startCoordinates))
         {
-            enemyCoordinates = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
+            _startCoordinates = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
         }
 
-        _tiles[enemyCoordinates.X, enemyCoordinates.Y].ChangeColor(Color.green, true);
-
-        Coordinates enemyCoordinates1 = new Coordinates(-1, -1);
-        while (!_maze.CheckCoordinatesForValid(enemyCoordinates1))
+        while (!_maze.CheckCoordinatesForValid(_finishCoordinates))
         {
-            enemyCoordinates1 = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
+            _finishCoordinates = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
         }
 
-        _tiles[enemyCoordinates1.X, enemyCoordinates1.Y].ChangeColor(Color.magenta, true);
+        _pathFindingAlgorithm.FindPath(_maze, _finishCoordinates, _finishCoordinates, out List<Coordinates> path);
 
-        _pathFindingAlgorithm.FindPath(_maze, enemyCoordinates, enemyCoordinates1, out List<Coordinates> path);
-        foreach (var coordinate in path)
+        DrawPath(path);
+    }
+
+    private void DrawPath(List<Coordinates> path)
+    {
+        _tiles[_startCoordinates.X, _startCoordinates.Y].ChangeColor(Color.green, true);
+        _tiles[_finishCoordinates.X, _finishCoordinates.Y].ChangeColor(Color.magenta, true);
+        foreach (var coord in path)
         {
-            //_tiles[coordinate.X, coordinate.Y].TileText.text += "X";
-            _tiles[coordinate.X, coordinate.Y].ChangeColor(Color.yellow, true);
+            _tiles[coord.X, coord.Y].ChangeColor(Color.yellow, true);
         }
     }
 
@@ -87,16 +115,13 @@ public class GameController : MonoBehaviour
 
     public void Restart()
     {
-        for (int i = 0; i < _maze.Height; i++)
+        foreach (var tile in _tiles)
         {
-            for (int j = 0; j < _maze.Width; j++)
+            if (tile != null)
             {
-                if (_maze[i,j]!=0)
-                {
-                    _tiles[i, j].Reset();
-                }
+                tile.Reset();
             }
         }
-        SpawnEnemy();
+        //SpawnEnemy();
     }
 }

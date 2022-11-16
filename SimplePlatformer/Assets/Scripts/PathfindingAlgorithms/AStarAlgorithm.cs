@@ -21,7 +21,7 @@ namespace PathfindingAlgorithms
             TileChecked?.Invoke(this,e);
         }
 
-        public string Name => "A* algorithm";
+        public const string Name = "A* algorithm";
 
         public int FindPath(Maze maze, Coordinates startPoint, Coordinates destPoint, out List<Coordinates> path)
         {
