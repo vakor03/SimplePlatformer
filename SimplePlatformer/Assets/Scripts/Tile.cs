@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class TIle : MonoBehaviour
+public class Tile : MonoBehaviour
 {
     private Renderer _renderer;
 

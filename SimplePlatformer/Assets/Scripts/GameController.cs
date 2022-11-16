@@ -17,14 +17,14 @@ public class GameController : MonoBehaviour
     public float distanceBtwTiles;
     public double delay;
     private Maze _maze;
-    private TIle[,] _tiles;
+    private Tile[,] _tiles;
     private IPathFindingAlgorithm _pathFindingAlgorithm;
     private GameObject _tilesWrapper;
 
     void Start()
     {
         _maze = Maze.GenerateDefaultMaze();
-        _tiles = new TIle[_maze.Height, _maze.Width];
+        _tiles = new Tile[_maze.Height, _maze.Width];
         _pathFindingAlgorithm = new LeeAlgorithm();
         _tilesWrapper = new GameObject("TilesWrapper");
         _pathFindingAlgorithm.TileChecked += (a, b) =>
@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
                     GameObject tileSquare = Instantiate(tilePrefab,
                         new Vector3(distanceBtwTiles * i, 0, distanceBtwTiles * j),
                         Quaternion.identity, _tilesWrapper.transform);
-                    _tiles[i, j] = tileSquare.GetComponent<TIle>();
+                    _tiles[i, j] = tileSquare.GetComponent<Tile>();
                     _tiles[i, j].TileText.text = "";
                 }
             }
