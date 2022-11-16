@@ -1,34 +1,31 @@
+using System;
 using System.Collections.Generic;
 using Additional;
 using Mazes;
 using PathfindingAlgorithms;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-public class Tile
-{
-    public GameObject TileSquare;
-    public TMP_Text TileText;
-}
 
 public class GameController : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public GameObject tile;
+    public GameObject tilePrefab;
     public float distanceBtwTiles;
     public double delay;
     private Maze _maze;
-    private Tile[,] _tiles;
+    private TIle[,] _tiles;
     private IPathFindingAlgorithm _pathFindingAlgorithm;
     private GameObject _tilesWrapper;
 
     void Start()
     {
         _maze = Maze.GenerateDefaultMaze();
-        _tiles = new Tile[_maze.Height, _maze.Width];
-        _pathFindingAlgorithm = new AStarAlgorithm();
+        _tiles = new TIle[_maze.Height, _maze.Width];
+        _pathFindingAlgorithm = new LeeAlgorithm();
         _tilesWrapper = new GameObject("TilesWrapper");
         _pathFindingAlgorithm.TileChecked += (a, b) =>
         {
@@ -47,14 +44,10 @@ public class GameController : MonoBehaviour
             {
                 if (_maze[i, j] == 1)
                 {
-                    GameObject tileSquare = Instantiate(tile,
+                    GameObject tileSquare = Instantiate(tilePrefab,
                         new Vector3(distanceBtwTiles * i, 0, distanceBtwTiles * j),
                         Quaternion.identity, _tilesWrapper.transform);
-                    _tiles[i, j] = new Tile
-                    {
-                        TileSquare = tileSquare,
-                        TileText = tileSquare.GetComponentInChildren<TMP_Text>()
-                    };
+                    _tiles[i, j] = tileSquare.GetComponent<TIle>();
                     _tiles[i, j].TileText.text = "";
                 }
             }
@@ -69,7 +62,7 @@ public class GameController : MonoBehaviour
             enemyCoordinates = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
         }
 
-        _tiles[enemyCoordinates.X, enemyCoordinates.Y].TileText.text = "S";
+        _tiles[enemyCoordinates.X, enemyCoordinates.Y].ChangeColor(Color.green, true);
 
         Coordinates enemyCoordinates1 = new Coordinates(-1, -1);
         while (!_maze.CheckCoordinatesForValid(enemyCoordinates1))
@@ -77,17 +70,33 @@ public class GameController : MonoBehaviour
             enemyCoordinates1 = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
         }
 
-        _tiles[enemyCoordinates1.X, enemyCoordinates1.Y].TileText.text = "F";
+        _tiles[enemyCoordinates1.X, enemyCoordinates1.Y].ChangeColor(Color.magenta, true);
 
         _pathFindingAlgorithm.FindPath(_maze, enemyCoordinates, enemyCoordinates1, out List<Coordinates> path);
         foreach (var coordinate in path)
         {
-            _tiles[coordinate.X, coordinate.Y].TileText.text += "X";
+            //_tiles[coordinate.X, coordinate.Y].TileText.text += "X";
+            _tiles[coordinate.X, coordinate.Y].ChangeColor(Color.yellow, true);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void Restart()
+    {
+        for (int i = 0; i < _maze.Height; i++)
+        {
+            for (int j = 0; j < _maze.Width; j++)
+            {
+                if (_maze[i,j]!=0)
+                {
+                    _tiles[i, j].Reset();
+                }
+            }
+        }
+        SpawnEnemy();
     }
 }
