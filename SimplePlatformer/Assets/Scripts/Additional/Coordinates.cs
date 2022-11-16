@@ -4,6 +4,8 @@ namespace Additional
 {
     public struct Coordinates
     {
+        public static Coordinates Default { get; } = new(-1, -1);
+
         public Coordinates(int x, int y)
         {
             X = x;

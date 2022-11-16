@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Additional;
 using Mazes;
 using PathfindingAlgorithms;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -23,16 +24,18 @@ public class GameController : MonoBehaviour
     private Coordinates _startCoordinates;
     private Coordinates _finishCoordinates;
 
+    private bool _gameReady = false;
+
 
     private void Awake()
     {
-        
     }
 
     void Start()
     {
         dropdownHandler.InitDropdown(new List<string> { AStarAlgorithm.Name, LeeAlgorithm.Name }, OnDropdownSelected);
         _maze = Maze.GenerateDefaultMaze();
+        ResetCoordinates();
         _tiles = new Tile[_maze.Height, _maze.Width];
         _tilesWrapper = new GameObject("TilesWrapper");
 
@@ -40,7 +43,7 @@ public class GameController : MonoBehaviour
         InitAlgorithm(LeeAlgorithm.GetInstance);
         InstantiateField();
 
-
+        _gameReady = true;
         SpawnEnemy();
     }
 
@@ -52,10 +55,13 @@ public class GameController : MonoBehaviour
         };
     }
 
-    private void OnDropdownSelected(Dropdown dropdown)
+    private void OnDropdownSelected(TMP_Dropdown dropdown)
     {
         //TODO: create Singleton for algorithms
-        switch (dropdown.options[dropdown.value].text)
+        string a = dropdown.options[dropdown.value].text;
+        string aStar = AStarAlgorithm.Name;
+        string lee = LeeAlgorithm.Name;
+        switch (dropdown.options[dropdown.value].text.TrimStart())
         {
             case AStarAlgorithm.Name:
                 SetPathfindingAlgorithm(AStarAlgorithm.GetInstance);
@@ -71,8 +77,12 @@ public class GameController : MonoBehaviour
     private void SetPathfindingAlgorithm(IPathFindingAlgorithm pathFindingAlgorithm)
     {
         _pathFindingAlgorithm = pathFindingAlgorithm;
-        _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
-        DrawPath(path);
+        if (_gameReady)
+        {
+            ResetAllTiles();
+            _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
+            DrawPath(path);
+        }
     }
 
     private void InstantiateField()
@@ -97,15 +107,17 @@ public class GameController : MonoBehaviour
     {
         while (!_maze.CheckCoordinatesForValid(_startCoordinates))
         {
-            _startCoordinates = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
+            _startCoordinates.X = Random.Range(0, _maze.Height);
+            _startCoordinates.Y = Random.Range(0, _maze.Width);
         }
 
-        while (!_maze.CheckCoordinatesForValid(_finishCoordinates))
+        while (!_maze.CheckCoordinatesForValid(_finishCoordinates) || _startCoordinates.Equals(_finishCoordinates))
         {
-            _finishCoordinates = new Coordinates(Random.Range(0, _maze.Height), Random.Range(0, _maze.Width));
+            _finishCoordinates.X = Random.Range(0, _maze.Height);
+            _finishCoordinates.Y = Random.Range(0, _maze.Width);
         }
 
-        _pathFindingAlgorithm.FindPath(_maze, _finishCoordinates, _finishCoordinates, out List<Coordinates> path);
+        _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
 
         DrawPath(path);
     }
@@ -127,6 +139,13 @@ public class GameController : MonoBehaviour
 
     public void Restart()
     {
+        ResetAllTiles();
+        ResetCoordinates();
+        SpawnEnemy();
+    }
+
+    private void ResetAllTiles()
+    {
         foreach (var tile in _tiles)
         {
             if (tile != null)
@@ -134,6 +153,11 @@ public class GameController : MonoBehaviour
                 tile.Reset();
             }
         }
-        //SpawnEnemy();
+    }
+
+    private void ResetCoordinates()
+    {
+        _startCoordinates = Coordinates.Default;
+        _finishCoordinates = Coordinates.Default;
     }
 }
