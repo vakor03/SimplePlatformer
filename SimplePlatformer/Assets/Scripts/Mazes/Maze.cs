@@ -1,8 +1,10 @@
-﻿using Additional;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Additional;
 
 namespace Mazes
 {
-    public class Maze
+    public class Maze : IEnumerable<int>
     {
         private int[,] _matrix;
 
@@ -33,5 +35,16 @@ namespace Mazes
             { 1, 1, 1, 0, 1, 1, 1 },
             { 1, 1, 1, 1, 1, 1, 1 },
         });
+
+
+        IEnumerator<int> IEnumerable<int>.GetEnumerator()
+        {
+            return (IEnumerator<int>)_matrix.GetEnumerator();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
