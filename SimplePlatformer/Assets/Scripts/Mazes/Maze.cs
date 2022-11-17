@@ -4,7 +4,7 @@ using Additional;
 
 namespace Mazes
 {
-    public class Maze : IEnumerable<int>
+    public class Maze
     {
         private int[,] _matrix;
 
@@ -29,22 +29,11 @@ namespace Mazes
 
         public static Maze GenerateDefaultMaze() => new Maze(new[,]
         {
-            { 1, 1, 1, 1, 1, 1, 1 },
-            { 1, 1, 1, 0, 1, 1, 1 },
-            { 1, 1, 1, 0, 0, 0, 1 },
-            { 1, 1, 1, 0, 1, 1, 1 },
-            { 1, 1, 1, 1, 1, 1, 1 },
+            { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+            { 0, 0, 1, 0, 1, 1, 1, 1, 0, 1 },
+            { 1, 0, 1, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 1, 0, 1, 1, 1, 1, 1, 1 },
+            { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
         });
-
-
-        IEnumerator<int> IEnumerable<int>.GetEnumerator()
-        {
-            return (IEnumerator<int>)_matrix.GetEnumerator();
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

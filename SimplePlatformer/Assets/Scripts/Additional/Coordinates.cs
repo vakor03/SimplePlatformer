@@ -2,7 +2,7 @@
 
 namespace Additional
 {
-    public struct Coordinates
+    public struct Coordinates : IEquatable<Coordinates>
     {
         public static Coordinates Default { get; } = new(-1, -1);
 

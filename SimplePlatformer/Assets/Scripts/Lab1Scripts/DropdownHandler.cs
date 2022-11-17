@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 public class DropdownHandler : MonoBehaviour
 {
@@ -14,12 +14,6 @@ public class DropdownHandler : MonoBehaviour
     {
         _dropdown = GetComponent<TMP_Dropdown>();
     }
-
-    void Start()
-    {
-        //_dropdown = GetComponent<TMP_Dropdown>();
-    }
-
     public void InitDropdown(List<string> items, Action<TMP_Dropdown> dropdownItemSelected)
     {
         _dropdown.options.Clear();

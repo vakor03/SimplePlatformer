@@ -7,24 +7,19 @@ public class Tile : MonoBehaviour
 {
     private Renderer _renderer;
 
-    public TMP_Text TileText;
+    public TMP_Text tileText;
     public event Action<Tile> OnMouseDownEvent;
     public Coordinates Coordinates;
 
     public bool ObjActive { get; set; }
 
-    // Start is called before the first frame update
+    
     void Awake()
     {
         _renderer = GetComponent<Renderer>();
        
-        TileText = GetComponentInChildren<TMP_Text>();
-        TileText.color = Color.grey;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        tileText = GetComponentInChildren<TMP_Text>();
+        tileText.color = Color.grey;
     }
 
     private void OnMouseEnter()
@@ -46,16 +41,6 @@ public class Tile : MonoBehaviour
     private void OnMouseDown()
     {
         OnMouseDownEvent?.Invoke(this);
-        // if (!ObjActive)
-        // {
-        //     ChangeColor(Color.red);
-        // }
-        // else
-        // {
-        //     ChangeColor(Color.grey);
-        // }
-        //
-        // ObjActive = !ObjActive;
     }
 
     public void ChangeColor(Color color, bool changeActive = false)
@@ -65,7 +50,7 @@ public class Tile : MonoBehaviour
             _renderer.material.color = color;
             if (changeActive)
             {
-                TileText.color = Color.blue;
+                tileText.color = Color.blue;
                 ObjActive = !ObjActive;
             }
         }
@@ -75,7 +60,7 @@ public class Tile : MonoBehaviour
     {
         ObjActive = false;
         ChangeColor(Color.white);
-        TileText.text = String.Empty;
-        TileText.color = Color.grey;
+        tileText.text = String.Empty;
+        tileText.color = Color.grey;
     }
 }
