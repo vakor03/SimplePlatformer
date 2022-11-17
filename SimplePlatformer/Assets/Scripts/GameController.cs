@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Additional;
-using Games;
 using Mazes;
 using PathfindingAlgorithms;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 
 public class GameController : MonoBehaviour
@@ -24,13 +20,10 @@ public class GameController : MonoBehaviour
 
     private Coordinates _startCoordinates;
     private Coordinates _finishCoordinates;
-
-
+    
     private bool _gameReady;
-    private bool _gameInit;
 
-
-    private void Awake()
+    void Start()
     {
         _maze = Maze.GenerateDefaultMaze();
 
@@ -40,22 +33,15 @@ public class GameController : MonoBehaviour
 
         InstantiateField();
         ResetCoordinates();
-    }
-
-    void Start()
-    {
         dropdownHandler.InitDropdown(new List<string> {AStarAlgorithm.Name, LeeAlgorithm.Name}, OnDropdownSelected);
 
         InitAlgorithm(AStarAlgorithm.GetInstance);
         InitAlgorithm(LeeAlgorithm.GetInstance);
-        _gameInit = true;
-        //_gameReady = true;
-        //SpawnEnemy();
     }
 
     private void InitAlgorithm(IPathFindingAlgorithm pathFindingAlgorithm)
     {
-        pathFindingAlgorithm.TileChecked += (a, b) =>
+        pathFindingAlgorithm.TileChecked += (_, b) =>
         {
             _tiles[b.Coordinate.X, b.Coordinate.Y].TileText.text += b.Text;
         };
@@ -63,10 +49,6 @@ public class GameController : MonoBehaviour
 
     private void OnDropdownSelected(TMP_Dropdown dropdown)
     {
-        //TODO: create Singleton for algorithms
-        string a = dropdown.options[dropdown.value].text;
-        string aStar = AStarAlgorithm.Name;
-        string lee = LeeAlgorithm.Name;
         switch (dropdown.options[dropdown.value].text.TrimStart())
         {
             case AStarAlgorithm.Name:
@@ -166,36 +148,10 @@ public class GameController : MonoBehaviour
         RedrawPath();
     }
 
-    // private void SpawnEnemy()
-    // {
-    //     while (!_maze.CheckCoordinatesForValid(_startCoordinates))
-    //     {
-    //         _startCoordinates.X = Random.Range(0, _maze.Height);
-    //         _startCoordinates.Y = Random.Range(0, _maze.Width);
-    //     }
-    //
-    //     while (!_maze.CheckCoordinatesForValid(_finishCoordinates) || _startCoordinates.Equals(_finishCoordinates))
-    //     {
-    //         _finishCoordinates.X = Random.Range(0, _maze.Height);
-    //         _finishCoordinates.Y = Random.Range(0, _maze.Width);
-    //     }
-    //
-    //     _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
-    //
-    //     DrawPath(path);
-    // }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     public void Restart()
     {
         ResetAllTiles();
         ResetCoordinates();
-        //SpawnEnemy();
     }
 
     private void ResetAllTiles()

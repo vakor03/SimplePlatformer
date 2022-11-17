@@ -2,13 +2,13 @@
 
 namespace PathfindingAlgorithms
 {
-    public class PriorityQueue<T, F> where F : IComparable<F>
+    public class PriorityQueue<TElement, TPriority> where TPriority : IComparable<TPriority>
     {
         private int _count;
         public int Count => _count;
         private PriorityNode _root;
 
-        public void Enqueue(T element, F priority)
+        public void Enqueue(TElement element, TPriority priority)
         {
             _count++;
             PriorityNode newNode = new PriorityNode(element, priority);
@@ -29,7 +29,7 @@ namespace PathfindingAlgorithms
             current.Next = newNode;
         }
 
-        public T Dequeue()
+        public TElement Dequeue()
         {
             if (_count==0)
             {
@@ -37,7 +37,7 @@ namespace PathfindingAlgorithms
             }
 
             _count--;
-            T result = _root.Element;
+            TElement result = _root.Element;
             _root = _root.Next;
             return result;
         }
@@ -50,12 +50,11 @@ namespace PathfindingAlgorithms
 
         private class PriorityNode
         {
-            //public PriorityNode Previous { get; set; }
             public PriorityNode Next { get; set; }
-            public F Priority { get; private set; }
-            public T Element { get; private set; }
+            public TPriority Priority { get; private set; }
+            public TElement Element { get; private set; }
 
-            public PriorityNode(T element, F priority)
+            public PriorityNode(TElement element, TPriority priority)
             {
                 Priority = priority;
                 Element = element;
