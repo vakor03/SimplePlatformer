@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Additional;
+using Games;
 using Mazes;
 using PathfindingAlgorithms;
 using TMPro;
@@ -24,27 +25,32 @@ public class GameController : MonoBehaviour
     private Coordinates _startCoordinates;
     private Coordinates _finishCoordinates;
 
-    private bool _gameReady = false;
+
+    private bool _gameReady;
+    private bool _gameInit;
 
 
     private void Awake()
     {
+        _maze = Maze.GenerateDefaultMaze();
+
+        _tiles = new Tile[_maze.Height, _maze.Width];
+        _tilesWrapper = new GameObject("TilesWrapper");
+
+
+        InstantiateField();
+        ResetCoordinates();
     }
 
     void Start()
     {
-        dropdownHandler.InitDropdown(new List<string> { AStarAlgorithm.Name, LeeAlgorithm.Name }, OnDropdownSelected);
-        _maze = Maze.GenerateDefaultMaze();
-        ResetCoordinates();
-        _tiles = new Tile[_maze.Height, _maze.Width];
-        _tilesWrapper = new GameObject("TilesWrapper");
+        dropdownHandler.InitDropdown(new List<string> {AStarAlgorithm.Name, LeeAlgorithm.Name}, OnDropdownSelected);
 
         InitAlgorithm(AStarAlgorithm.GetInstance);
         InitAlgorithm(LeeAlgorithm.GetInstance);
-        InstantiateField();
-
-        _gameReady = true;
-        SpawnEnemy();
+        _gameInit = true;
+        //_gameReady = true;
+        //SpawnEnemy();
     }
 
     private void InitAlgorithm(IPathFindingAlgorithm pathFindingAlgorithm)
@@ -77,11 +83,28 @@ public class GameController : MonoBehaviour
     private void SetPathfindingAlgorithm(IPathFindingAlgorithm pathFindingAlgorithm)
     {
         _pathFindingAlgorithm = pathFindingAlgorithm;
+        RedrawPath();
+    }
+
+    private void RedrawPath()
+    {
+        ResetAllTiles();
         if (_gameReady)
         {
-            ResetAllTiles();
             _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
-            DrawPath(path);
+            _tiles[_startCoordinates.X, _startCoordinates.Y].ChangeColor(Color.green, true);
+            _tiles[_finishCoordinates.X, _finishCoordinates.Y].ChangeColor(Color.magenta, true);
+            foreach (var coord in path)
+            {
+                _tiles[coord.X, coord.Y].ChangeColor(Color.yellow, true);
+            }
+        }
+        else
+        {
+            if (!_startCoordinates.Equals(Coordinates.Default))
+            {
+                _tiles[_startCoordinates.X, _startCoordinates.Y].ChangeColor(Color.green, true);
+            }
         }
     }
 
@@ -98,39 +121,70 @@ public class GameController : MonoBehaviour
                         Quaternion.identity, _tilesWrapper.transform);
                     _tiles[i, j] = tileSquare.GetComponent<Tile>();
                     _tiles[i, j].TileText.text = "";
+                    _tiles[i, j].OnMouseDownEvent += OnTileMouseDown;
+                    _tiles[i, j].Coordinates = new Coordinates(i, j);
                 }
             }
         }
     }
 
-    private void SpawnEnemy()
+    private void OnTileMouseDown(Tile tile)
     {
-        while (!_maze.CheckCoordinatesForValid(_startCoordinates))
+        if (_gameReady)
         {
-            _startCoordinates.X = Random.Range(0, _maze.Height);
-            _startCoordinates.Y = Random.Range(0, _maze.Width);
+            if (tile.Coordinates.Equals(_startCoordinates))
+            {
+                _startCoordinates = _finishCoordinates;
+                _finishCoordinates = Coordinates.Default;
+                _gameReady = false;
+                RedrawPath();
+            }
+            else if (tile.Coordinates.Equals(_finishCoordinates))
+            {
+                _finishCoordinates = Coordinates.Default;
+                _gameReady = false;
+                RedrawPath();
+            }
+
+            return;
         }
 
-        while (!_maze.CheckCoordinatesForValid(_finishCoordinates) || _startCoordinates.Equals(_finishCoordinates))
+        if (_startCoordinates.Equals(Coordinates.Default))
         {
-            _finishCoordinates.X = Random.Range(0, _maze.Height);
-            _finishCoordinates.Y = Random.Range(0, _maze.Width);
+            _startCoordinates = tile.Coordinates;
+        }
+        else if (!_startCoordinates.Equals(tile.Coordinates))
+        {
+            _finishCoordinates = tile.Coordinates;
+            _gameReady = true;
+        }
+        else
+        {
+            _startCoordinates = Coordinates.Default;
         }
 
-        _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
-
-        DrawPath(path);
+        RedrawPath();
     }
 
-    private void DrawPath(List<Coordinates> path)
-    {
-        _tiles[_startCoordinates.X, _startCoordinates.Y].ChangeColor(Color.green, true);
-        _tiles[_finishCoordinates.X, _finishCoordinates.Y].ChangeColor(Color.magenta, true);
-        foreach (var coord in path)
-        {
-            _tiles[coord.X, coord.Y].ChangeColor(Color.yellow, true);
-        }
-    }
+    // private void SpawnEnemy()
+    // {
+    //     while (!_maze.CheckCoordinatesForValid(_startCoordinates))
+    //     {
+    //         _startCoordinates.X = Random.Range(0, _maze.Height);
+    //         _startCoordinates.Y = Random.Range(0, _maze.Width);
+    //     }
+    //
+    //     while (!_maze.CheckCoordinatesForValid(_finishCoordinates) || _startCoordinates.Equals(_finishCoordinates))
+    //     {
+    //         _finishCoordinates.X = Random.Range(0, _maze.Height);
+    //         _finishCoordinates.Y = Random.Range(0, _maze.Width);
+    //     }
+    //
+    //     _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
+    //
+    //     DrawPath(path);
+    // }
+
 
     // Update is called once per frame
     void Update()
@@ -141,7 +195,7 @@ public class GameController : MonoBehaviour
     {
         ResetAllTiles();
         ResetCoordinates();
-        SpawnEnemy();
+        //SpawnEnemy();
     }
 
     private void ResetAllTiles()

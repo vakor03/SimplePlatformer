@@ -1,4 +1,5 @@
 using System;
+using Additional;
 using TMPro;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ public class Tile : MonoBehaviour
     private Renderer _renderer;
 
     public TMP_Text TileText;
+    public event Action<Tile> OnMouseDownEvent;
+    public Coordinates Coordinates;
 
     public bool ObjActive { get; set; }
 
@@ -42,16 +45,17 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!ObjActive)
-        {
-            ChangeColor(Color.red);
-        }
-        else
-        {
-            ChangeColor(Color.grey);
-        }
-
-        ObjActive = !ObjActive;
+        OnMouseDownEvent?.Invoke(this);
+        // if (!ObjActive)
+        // {
+        //     ChangeColor(Color.red);
+        // }
+        // else
+        // {
+        //     ChangeColor(Color.grey);
+        // }
+        //
+        // ObjActive = !ObjActive;
     }
 
     public void ChangeColor(Color color, bool changeActive = false)
