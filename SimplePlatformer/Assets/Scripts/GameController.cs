@@ -20,7 +20,7 @@ public class GameController : MonoBehaviour
 
     private Coordinates _startCoordinates;
     private Coordinates _finishCoordinates;
-    
+
     private bool _gameReady;
 
     void Start()
@@ -73,12 +73,21 @@ public class GameController : MonoBehaviour
         ResetAllTiles();
         if (_gameReady)
         {
-            _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates, out List<Coordinates> path);
-            _tiles[_startCoordinates.X, _startCoordinates.Y].ChangeColor(Color.green, true);
-            _tiles[_finishCoordinates.X, _finishCoordinates.Y].ChangeColor(Color.magenta, true);
-            foreach (var coord in path)
+            int length = _pathFindingAlgorithm.FindPath(_maze, _startCoordinates, _finishCoordinates,
+                out List<Coordinates> path);
+            if (length == -1)
             {
-                _tiles[coord.X, coord.Y].ChangeColor(Color.yellow, true);
+                _tiles[_startCoordinates.X, _startCoordinates.Y].ChangeColor(Color.red, true);
+                _tiles[_finishCoordinates.X, _finishCoordinates.Y].ChangeColor(Color.red, true);
+            }
+            else
+            {
+                _tiles[_startCoordinates.X, _startCoordinates.Y].ChangeColor(Color.green, true);
+                _tiles[_finishCoordinates.X, _finishCoordinates.Y].ChangeColor(Color.magenta, true);
+                foreach (var coord in path)
+                {
+                    _tiles[coord.X, coord.Y].ChangeColor(Color.yellow, true);
+                }
             }
         }
         else
