@@ -11,21 +11,23 @@ namespace Player
 
         [Header("Jump")]
         [SerializeField] private float _jumpForce;
-        [SerializeField] private float _distanceToCheck = 0.5f;
         [SerializeField] private bool _isGrounded;
-
+        
+        [Header("GroundChecker")]
+        [SerializeField] private Transform _groundChecker;
+        [SerializeField] private float _groundCheckRadius;
+        [SerializeField] private LayerMask _groundLayer;
+        
         private Rigidbody2D _rigidbody;
 
         private void Start()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
         }
-
-        private float _prevYPosition;
-
+        
         private void Update()
         {
-            if (Physics2D.Raycast(transform.position, Vector2.down, _distanceToCheck))
+            if (Physics2D.OverlapCircle(_groundChecker.position, _groundCheckRadius, _groundLayer))
             {
                 _isGrounded = true;
             }
@@ -37,7 +39,7 @@ namespace Player
 
         public void MoveHorizontally(float direction)
         {
-            if (direction == 0 || !_isGrounded)
+            if (direction == 0)
             {
                 return;
             }
