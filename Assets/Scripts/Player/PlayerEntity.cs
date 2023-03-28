@@ -1,13 +1,15 @@
 using Core.Enums;
 using Core.Tools;
+using Player.PlayerAnimation;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Player
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerEntity : MonoBehaviour
     {
-        [SerializeField] private Animator _animator;
+        [SerializeField] private AnimationController _animationController;
 
         [Header("HorizontalMovement")]
         [SerializeField] private float _horizontalSpeed;
@@ -50,10 +52,10 @@ namespace Player
 
         private void UpdateAnimations()
         {
-            PlayAnimation(AnimationType.Idle, true);
-            PlayAnimation(AnimationType.Run, _isRunning);
-            PlayAnimation(AnimationType.Jump, !_isGrounded);
-            PlayAnimation(AnimationType.Fall, !_isGrounded && _rigidbody.velocity.y <= 0);
+            _animationController.PlayAnimation(AnimationType.Idle, true);
+            _animationController.PlayAnimation(AnimationType.Run, _isRunning);
+            _animationController.PlayAnimation(AnimationType.Jump, !_isGrounded);
+            _animationController.PlayAnimation(AnimationType.Fall, !_isGrounded && _rigidbody.velocity.y <= 0);
         }
 
         public void MoveHorizontally(float direction)
@@ -96,34 +98,6 @@ namespace Player
             {
                 cameraPair.Value.enabled = cameraPair.Key == _direction;
             }
-        }
-
-        private void PlayAnimation(AnimationType animationType, bool active)
-        {
-            if (!active)
-            {
-                if (_currentAnimationType == AnimationType.Idle || _currentAnimationType != animationType)
-                {
-                    return;
-                }
-
-                _currentAnimationType = AnimationType.Idle;
-                PlayAnimation(_currentAnimationType);
-                return;
-            }
-
-            if (_currentAnimationType > animationType)
-            {
-                return;
-            }
-
-            _currentAnimationType = animationType;
-            PlayAnimation(_currentAnimationType);
-        }
-
-        private void PlayAnimation(AnimationType animationType)
-        {
-            _animator.SetInteger(nameof(AnimationType), (int)animationType);
         }
     }
 }
