@@ -319,9 +319,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355999105}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.92, y: -0.07194841, z: 0}
+  m_LocalPosition: {x: 1.99, y: 0.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 572746441}
   m_RootOrder: 0
@@ -1881,6 +1881,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 572746441}
+  - component: {fileID: 572746442}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -1905,6 +1906,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &572746442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 572746440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df22e6f8fc24629a3976ab1c808200f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _parts:
+  - <SpriteRenderer>k__BackingField: {fileID: 831253430}
+    <Speed>k__BackingField: 0.5
+  - <SpriteRenderer>k__BackingField: {fileID: 355999106}
+    <Speed>k__BackingField: 0.1
+  _targetTransform: {fileID: 804906433}
 --- !u!1 &804906429
 GameObject:
   m_ObjectHideFlags: 0
@@ -2078,6 +2097,7 @@ GameObject:
   m_Component:
   - component: {fileID: 831253431}
   - component: {fileID: 831253430}
+  - component: {fileID: 831253432}
   m_Layer: 0
   m_Name: Nebula Aqua-Pink
   m_TagString: Untagged
@@ -2145,13 +2165,31 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 831253429}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.83, y: 0.28750002, z: 0}
+  m_LocalPosition: {x: 1.61, y: 0.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 572746441}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &831253432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 831253429}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49ec1aebc6377394f9017e247aa8423f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _target: {fileID: 804906433}
+  _speed: 0.5
+  _initialPart: {fileID: 831253430}
+  _layers: []
+  _targetPreviousPosition: {x: 0, y: 0}
+  _layerSize: {x: 0, y: 0}
 --- !u!1 &1003203126
 GameObject:
   m_ObjectHideFlags: 3
