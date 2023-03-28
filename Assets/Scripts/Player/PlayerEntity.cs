@@ -8,7 +8,7 @@ namespace Player
     public class PlayerEntity : MonoBehaviour
     {
         [SerializeField] private Animator _animator;
-        
+
         [Header("HorizontalMovement")]
         [SerializeField] private float _horizontalSpeed;
         [SerializeField] private Direction _direction;
@@ -16,16 +16,16 @@ namespace Player
         [Header("Jump")]
         [SerializeField] private float _jumpForce;
         [SerializeField] private bool _isGrounded;
-        
+
         [Header("GroundChecker")]
         [SerializeField] private Transform _groundChecker;
         [SerializeField] private float _groundCheckRadius;
         [SerializeField] private LayerMask _groundLayer;
 
         [SerializeField] private DirectionalCamerasPair _cameras;
-        
+
         private Rigidbody2D _rigidbody;
-        
+
         private bool _isRunning;
         private AnimationType _currentAnimationType;
 
@@ -33,7 +33,7 @@ namespace Player
         {
             _rigidbody = GetComponent<Rigidbody2D>();
         }
-        
+
         private void Update()
         {
             if (Physics2D.OverlapCircle(_groundChecker.position, _groundCheckRadius, _groundLayer))
@@ -52,7 +52,7 @@ namespace Player
         {
             PlayAnimation(AnimationType.Idle, true);
             PlayAnimation(AnimationType.Run, _isRunning);
-             PlayAnimation(AnimationType.Jump, !_isGrounded);
+            PlayAnimation(AnimationType.Jump, !_isGrounded);
             PlayAnimation(AnimationType.Fall, !_isGrounded && _rigidbody.velocity.y <= 0);
         }
 
@@ -61,9 +61,9 @@ namespace Player
             if (direction == 0)
             {
                 _isRunning = false;
-                return;
+                    return;
             }
-            
+
             _isRunning = true;
             SetDirection(direction);
             Vector2 velocity = new Vector2(direction * _horizontalSpeed, 0);
@@ -102,7 +102,7 @@ namespace Player
         {
             if (!active)
             {
-                if (_currentAnimationType == AnimationType.Idle|| _currentAnimationType != animationType)
+                if (_currentAnimationType == AnimationType.Idle || _currentAnimationType != animationType)
                 {
                     return;
                 }
@@ -111,6 +111,7 @@ namespace Player
                 PlayAnimation(_currentAnimationType);
                 return;
             }
+
             if (_currentAnimationType > animationType)
             {
                 return;
