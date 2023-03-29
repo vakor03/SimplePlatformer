@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using InputReader;
 using Player;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ namespace Core
         private ExternalDeviceInputReader _externalDeviceInput;
         private PlayerBrain _playerBrain;
 
-        private bool OnPause;
+        private bool _onPause;
 
         private void Awake()
         {
@@ -26,7 +26,7 @@ namespace Core
 
         private void Update()
         {
-            if (OnPause)
+            if (_onPause)
             {
                 return;
             }
@@ -35,7 +35,7 @@ namespace Core
 
         private void FixedUpdate()
         {
-            if (OnPause)
+            if (_onPause)
             {
                 return;
             }

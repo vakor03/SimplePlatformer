@@ -2502,15 +2502,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animationController: {fileID: 804906438}
-  _horizontalSpeed: 0.5
-  _direction: 0
-  _jumpForce: 13
-  _isGrounded: 0
-  _groundChecker: {fileID: 1697461788}
-  _groundCheckRadius: 0.6
-  _groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
+  _horizontalMovementData:
+    <HorizontalSpeed>k__BackingField: 0.7
+    <Direction>k__BackingField: 0
+  _jumpData:
+    <JumpForce>k__BackingField: 12
+  _groundCheckerData:
+    <GroundChecker>k__BackingField: {fileID: 1697461788}
+    <GroundCheckRadius>k__BackingField: 0.6
+    <GroundLayer>k__BackingField:
+      serializedVersion: 2
+      m_Bits: 64
   _cameras:
     _leftCamera: {fileID: 460334624}
     _rightCamera: {fileID: 1399147135}

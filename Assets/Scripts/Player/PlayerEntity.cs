@@ -1,4 +1,6 @@
 using Core.Enums;
+using Core.Movement.Controller;
+using Core.Movement.Data;
 using Core.Tools;
 using Player.PlayerAnimation;
 using UnityEngine;
@@ -11,65 +13,58 @@ namespace Player
     {
         [SerializeField] private AnimationController _animationController;
 
-        [Header("HorizontalMovement")]
-        [SerializeField] private float _horizontalSpeed;
-        [SerializeField] private Direction _direction;
-
-        [Header("Jump")]
-        [SerializeField] private float _jumpForce;
-        [SerializeField] private bool _isGrounded;
-
-        [Header("GroundChecker")]
-        [SerializeField] private Transform _groundChecker;
-        [SerializeField] private float _groundCheckRadius;
-        [SerializeField] private LayerMask _groundLayer;
+        [SerializeField] private HorizontalMovementData _horizontalMovementData;
+        
+        [SerializeField] private JumpData _jumpData;
+        
+        [SerializeField] private GroundCheckerData _groundCheckerData;
 
         [SerializeField] private DirectionalCamerasPair _cameras;
 
         private Rigidbody2D _rigidbody;
 
-        private bool _isRunning;
+        private bool _isGrounded;
+        
         private AnimationType _currentAnimationType;
+        private HorizontalMover _horizontalMover;
+        private Jumper _jumper;
+        private GroundChecker _groundChecker;
 
         private void Start()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
+            _horizontalMover = new HorizontalMover(_rigidbody, _horizontalMovementData);
+            _jumper = new Jumper(_rigidbody, _jumpData);
+            _groundChecker = new GroundChecker(_groundCheckerData);
         }
 
         private void Update()
         {
-            if (Physics2D.OverlapCircle(_groundChecker.position, _groundCheckRadius, _groundLayer))
-            {
-                _isGrounded = true;
-            }
-            else
-            {
-                _isGrounded = false;
-            }
+            _isGrounded = _groundChecker.CheckGrounded();
 
             UpdateAnimations();
+            UpdateCameras();
+        }
+
+        private void UpdateCameras()
+        {
+            foreach (var cameraPair in _cameras.DirectionCameras)
+            {
+                cameraPair.Value.enabled = cameraPair.Key == _horizontalMover.Direction;   
+            }
         }
 
         private void UpdateAnimations()
         {
             _animationController.PlayAnimation(AnimationType.Idle, true);
-            _animationController.PlayAnimation(AnimationType.Run, _isRunning);
+            _animationController.PlayAnimation(AnimationType.Run, _horizontalMover.IsMoving);
             _animationController.PlayAnimation(AnimationType.Jump, !_isGrounded);
             _animationController.PlayAnimation(AnimationType.Fall, !_isGrounded && _rigidbody.velocity.y <= 0);
         }
-
+        
         public void MoveHorizontally(float direction)
         {
-            if (direction == 0)
-            {
-                _isRunning = false;
-                    return;
-            }
-
-            _isRunning = true;
-            SetDirection(direction);
-            Vector2 velocity = new Vector2(direction * _horizontalSpeed, 0);
-            _rigidbody.velocity += velocity;
+            _horizontalMover.MoveHorizontally(direction);
         }
 
         public void Jump()
@@ -79,25 +74,9 @@ namespace Player
                 return;
             }
 
-            _rigidbody.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
+            _jumper.Jump();
         }
 
-        private void SetDirection(float direction)
-        {
-            if ((_direction == Direction.Right) != direction > 0)
-            {
-                Flip();
-            }
-        }
-
-        private void Flip()
-        {
-            transform.Rotate(0, 180, 0);
-            _direction = _direction == Direction.Right ? Direction.Left : Direction.Right;
-            foreach (var cameraPair in _cameras.DirectionCameras)
-            {
-                cameraPair.Value.enabled = cameraPair.Key == _direction;
-            }
-        }
+       
     }
 }
