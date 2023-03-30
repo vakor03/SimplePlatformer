@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Core.Services.Updater;
 using InputReader;
 using Player;
 using UnityEngine;
@@ -11,35 +13,44 @@ namespace Core
         [SerializeField] private GameUIInputView _gameUIInputView;
 
         private ExternalDeviceInputReader _externalDeviceInput;
-        private PlayerBrain _playerBrain;
+        private PlayerSystem _playerSystem;
+        private ProjectUpdater _projectUpdater;
 
-        private bool _onPause;
+        private List<IDisposable> _disposables;
+
 
         private void Awake()
         {
-            _externalDeviceInput = new ExternalDeviceInputReader();
-            _playerBrain = new PlayerBrain(_playerEntity, new List<IEntityInputSource>()
+            _disposables = new List<IDisposable>();
+            if (ProjectUpdater.Instance == null)
             {
-                _externalDeviceInput, _gameUIInputView
-            });
+                _projectUpdater = new GameObject("ProjectUpdater").AddComponent<ProjectUpdater>();
+            }
+            else
+            {
+                _projectUpdater = ProjectUpdater.Instance as ProjectUpdater;
+            }
+            
+            _externalDeviceInput = new ExternalDeviceInputReader();
+            _disposables.Add(_externalDeviceInput);
+            _playerSystem = new PlayerSystem(_playerEntity,
+                new List<IEntityInputSource> { _gameUIInputView, _externalDeviceInput });
         }
 
         private void Update()
         {
-            if (_onPause)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                return;
+                _projectUpdater.IsPaused = !_projectUpdater.IsPaused;
             }
-            _externalDeviceInput.OnUpdate();
         }
-
-        private void FixedUpdate()
+        
+        private void OnDestroy()
         {
-            if (_onPause)
+            foreach (var disposable in _disposables)
             {
-                return;
+                disposable.Dispose();
             }
-            _playerBrain.OnFixedUpdate();
         }
     }
 }

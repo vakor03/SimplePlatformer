@@ -2506,7 +2506,7 @@ MonoBehaviour:
     <HorizontalSpeed>k__BackingField: 0.7
     <Direction>k__BackingField: 0
   _jumpData:
-    <JumpForce>k__BackingField: 12
+    <JumpForce>k__BackingField: 13
   _groundCheckerData:
     <GroundChecker>k__BackingField: {fileID: 1697461788}
     <GroundCheckRadius>k__BackingField: 0.6

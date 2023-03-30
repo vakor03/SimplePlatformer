@@ -18,7 +18,6 @@ namespace InputReader
         private void Awake()
         {
             _jumpButton.onClick.AddListener(() => Jump = true);
-            _jumpButton.onClick.AddListener(() => Debug.Log("Jump"));
             _attackButton.onClick.AddListener(() => Attack = true);
         }
 
