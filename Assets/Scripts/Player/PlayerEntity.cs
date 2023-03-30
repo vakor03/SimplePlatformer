@@ -3,6 +3,7 @@ using Core.Movement.Controller;
 using Core.Movement.Data;
 using Core.Tools;
 using Player.PlayerAnimation;
+using StatsSystem;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -30,11 +31,11 @@ namespace Player
         private Jumper _jumper;
         private GroundChecker _groundChecker;
 
-        private void Start()
+        public void Initialize(IStatValueGiver statValueGiver)
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-            _horizontalMover = new HorizontalMover(_rigidbody, _horizontalMovementData);
-            _jumper = new Jumper(_rigidbody, _jumpData);
+            _horizontalMover = new HorizontalMover(_rigidbody, _horizontalMovementData, statValueGiver);
+            _jumper = new Jumper(_rigidbody, _jumpData, statValueGiver);
             _groundChecker = new GroundChecker(_groundCheckerData);
         }
 

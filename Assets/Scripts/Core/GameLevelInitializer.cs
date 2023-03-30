@@ -33,8 +33,10 @@ namespace Core
             
             _externalDeviceInput = new ExternalDeviceInputReader();
             _disposables.Add(_externalDeviceInput);
+            
             _playerSystem = new PlayerSystem(_playerEntity,
                 new List<IEntityInputSource> { _gameUIInputView, _externalDeviceInput });
+            _disposables.Add(_playerSystem);
         }
 
         private void Update()
