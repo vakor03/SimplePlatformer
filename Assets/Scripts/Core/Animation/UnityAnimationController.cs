@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Core.Enums;
+using Player;
 using UnityEngine;
 
-namespace Player.PlayerAnimation
+namespace Core.Animation
 {
     [RequireComponent(typeof(Animator))]
     public class UnityAnimationController : AnimationController

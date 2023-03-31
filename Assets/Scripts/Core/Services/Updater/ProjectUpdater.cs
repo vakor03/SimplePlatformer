@@ -7,11 +7,6 @@ namespace Core.Services.Updater
     {
         public static IProjectUpdater Instance { get; private set; }
 
-        public event Action UpdateCaller;
-        public event Action FixedUpdateCaller;
-        public event Action LateUpdateCaller;
-
-        private bool _isPaused;
         public bool IsPaused
         {
             get => _isPaused;
@@ -25,7 +20,12 @@ namespace Core.Services.Updater
                 Time.timeScale = _isPaused ? 0 : 1;
             }
         }
-
+        private bool _isPaused;
+        
+        public event Action UpdateCaller;
+        public event Action FixedUpdateCaller;
+        public event Action LateUpdateCaller;
+        
         private void Awake()
         {
             if (Instance == null)

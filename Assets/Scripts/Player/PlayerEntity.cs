@@ -1,8 +1,8 @@
+using Core.Animation;
 using Core.Enums;
 using Core.Movement.Controller;
 using Core.Movement.Data;
 using Core.Tools;
-using Player.PlayerAnimation;
 using StatsSystem;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,19 +13,15 @@ namespace Player
     public class PlayerEntity : MonoBehaviour
     {
         [SerializeField] private AnimationController _animationController;
-
         [SerializeField] private HorizontalMovementData _horizontalMovementData;
-        
         [SerializeField] private JumpData _jumpData;
-        
         [SerializeField] private GroundCheckerData _groundCheckerData;
-
         [SerializeField] private DirectionalCamerasPair _cameras;
 
         private Rigidbody2D _rigidbody;
 
         private bool _isGrounded;
-        
+
         private AnimationType _currentAnimationType;
         private HorizontalMover _horizontalMover;
         private Jumper _jumper;
@@ -51,7 +47,7 @@ namespace Player
         {
             foreach (var cameraPair in _cameras.DirectionCameras)
             {
-                cameraPair.Value.enabled = cameraPair.Key == _horizontalMover.Direction;   
+                cameraPair.Value.enabled = cameraPair.Key == _horizontalMover.Direction;
             }
         }
 
@@ -62,7 +58,7 @@ namespace Player
             _animationController.PlayAnimation(AnimationType.Jump, !_isGrounded);
             _animationController.PlayAnimation(AnimationType.Fall, !_isGrounded && _rigidbody.velocity.y <= 0);
         }
-        
+
         public void MoveHorizontally(float direction)
         {
             _horizontalMover.MoveHorizontally(direction);
@@ -77,7 +73,5 @@ namespace Player
 
             _jumper.Jump();
         }
-
-       
     }
 }

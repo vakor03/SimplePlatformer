@@ -37,6 +37,7 @@ namespace Core.Parallax
             }
             _previousTargetPosition = targetPosition;
         }
+        
         [Serializable]
         private class ParallaxPart
         {

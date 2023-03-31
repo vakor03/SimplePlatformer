@@ -1,12 +1,12 @@
 ﻿using System;
+using Core.Enums;
 using UnityEngine;
 
-namespace Player.PlayerAnimation
+namespace Core.Animation
 {
     public abstract class AnimationController : MonoBehaviour
     {
         private AnimationType _currentAnimationType;
-
         public event Action AnimationEnded;
         public event Action ActionRequested;
 
@@ -36,7 +36,7 @@ namespace Player.PlayerAnimation
 
         protected abstract void PlayAnimation(AnimationType animationType);
 
-        protected void OnAnimationEnded()=> AnimationEnded?.Invoke();
+        protected void OnAnimationEnded() => AnimationEnded?.Invoke();
         protected void OnActionRequested() => ActionRequested?.Invoke();
     }
 }
